@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 
+import './styles/app.css'
+
 import FirebaseContext from './context/firebase'
 import { FieldValue, firebase } from './lib/firebase'
 console.log(firebase)
