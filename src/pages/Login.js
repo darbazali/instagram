@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { useHistory, Link } from 'react-router-dom'
-
+import * as ROUTES from '../constants/routes'
 import FirebaseContext from '../context/firebase'
 
 const Login = () => {
@@ -17,7 +17,18 @@ const Login = () => {
     document.title = 'Login - Instagram'
   }, [])
 
-  const handleLogin = () => {}
+  const handleLogin = async (e) => {
+    e.preventDefault()
+
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password)
+      history.push(ROUTES.DASHBOARD)
+    } catch (error) {
+      setEmail('')
+      setPassword('')
+      setError(error.message)
+    }
+  }
   return (
     <div className='container flex mx-auto max-w-screen-md items-center h-screen'>
       <div className='flex w-3/5'>
@@ -61,7 +72,7 @@ const Login = () => {
             <button
               disabled={isInvalid}
               type='submit'
-              className={`bg-blue-500 text-white w-full rounded h-10 font-bold ${
+              className={`bg-blue-medium text-white w-full rounded h-10 font-bold ${
                 isInvalid && ' opacity-50'
               }`}
             >
@@ -69,15 +80,12 @@ const Login = () => {
             </button>
           </form>
         </div>
-        <div className='flex justify-center items-center flex-col w-full bg-white p-4 border border-gray-primary'>
+        <div className='flex justify-center items-center flex-col w-full bg-white p-4 rounded border border-gray-primary'>
           <p className='text-sm'>
             Don't have an accout?
-            <Link
-              style={{ textDecoration: 'underline', color: 'dodgerblue' }}
-              to='/signup'
-            >
+            <Link className='font-bold text-blue-medium' to='/signup'>
               {' '}
-              Signup
+              Sign up
             </Link>
           </p>
         </div>
