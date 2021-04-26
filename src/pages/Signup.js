@@ -26,7 +26,38 @@ const Signup = () => {
 
     const usernameExists = await doesUsernameExist(username)
 
-    // create new user
+    if (!usernameExists.length) {
+      try {
+        const createdUserResult = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+
+        //  authentication
+        await createdUserResult.user.updateProfile({
+          displayName: username,
+        })
+
+        // firebase user collection ( create a doc )
+        await firebase.firestore().collection('users').add({
+          userId: createdUserResult.user.uid,
+          username: username.toLowerCase(),
+          fullname,
+          emailAddress: email.toLowerCase(),
+          following: [],
+          dateCreated: Date.now(),
+        })
+
+        history.push(ROUTES.DASHBOARD)
+      } catch (error) {
+        setFullname('')
+        setEmail('')
+        setPassword('')
+        setError(error.message)
+      }
+    } else {
+      setUsername('')
+      setError('This user already exists, please try another one!')
+    }
   }
   return (
     <div className='container flex mx-auto max-w-screen-md items-center h-screen'>
@@ -66,7 +97,7 @@ const Signup = () => {
               placeholder='Full Name'
               className='text-sm text-gray-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary rounded mb-2'
               onChange={(e) => setFullname(e.target.value)}
-              value={username}
+              value={fullname}
             />
 
             <input
